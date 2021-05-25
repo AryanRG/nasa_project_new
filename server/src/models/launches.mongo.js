@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const launchesSchema = new mongoose.Schema({
-    flghtNumber : {
+    flightNumber : {
         type: Number,
         required: true,
     },

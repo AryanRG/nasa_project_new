@@ -1,11 +1,12 @@
 const launchesDatabase = require('./launches.mongo')
+const planets = require('./planets.mongo')
 
 const launches =new Map();
 
-let latestFlightNumber = 100;
+let latestFlightNumber = 101;
 
 const launch ={
-    flghtNumber :100,
+    
     mission : 'Kepler Exploration X',
     rocket : 'Explorer IS1',
     launchDate : new Date('December 27. 2030'),
@@ -13,6 +14,7 @@ const launch ={
     customer : ['ZTM', 'NASA'],
     upcoming : true, 
     success: true,
+    flightNumber : 101,
 };
 
 saveLaunch(launch);
@@ -22,11 +24,20 @@ function existsLaunchWithId(launchId){
     return launches.has(launchId);
 }
 
-function getAllLaunches(){
-    return Array.from(launches.values());
+async function getAllLaunches(){
+    return await launchesDatabase.
+    find({},{ '__v': 0 , '_id' :0 });
 }
 
 async function saveLaunch(launch){
+    const planet = await planets.findOne({
+        keplerName : launch.target,
+    });
+
+    if(!planet){
+        throw new Error('No matching planet found');
+    }
+
     await launchesDatabase.updateOne({
         flightNumber : launch.flightNumber,
     }, launch, {
